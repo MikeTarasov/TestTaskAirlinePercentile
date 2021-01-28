@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,6 +37,9 @@ public class TicketsIndex {
             parseTickets(ticketsArray, departureName, arrivalName);
 
             calculateDuration(departureTimeShift, arrivalTimeShift);
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -75,23 +79,28 @@ public class TicketsIndex {
     private void calculateDuration(int departureTimeShift, int arrivalTimeShift) {
         String departureTimeZone;
         String arrivalTimeZone;
+
         if (departureTimeShift <= 0) {
             departureTimeZone = "UTC" + departureTimeShift;
         } else {
             departureTimeZone = "UTC+" + departureTimeShift;
         }
+
         if (arrivalTimeShift <= 0) {
             arrivalTimeZone = "UTC" + arrivalTimeShift;
         } else {
             arrivalTimeZone = "UTC+" + arrivalTimeShift;
         }
+
         for (Ticket ticket : tickets) {
             long departure = LocalDateTime.of(ticket.getDepartureDate(), ticket.getDepartureTime())
                     .atZone(ZoneId.of(departureTimeZone)).toEpochSecond();
             long arrival = LocalDateTime.of(ticket.getArrivalDate(), ticket.getArrivalTime())
                     .atZone(ZoneId.of(arrivalTimeZone)).toEpochSecond();
-
-            ticket.setDuration((arrival - departure + (departureTimeShift - arrivalTimeShift) * 3600L) * 1_000);
+            //разницу в часовых поясах (departureTimeShift - arrivalTimeShift) переводим из часов в секунды ->
+            //к ней прибавляем разницу во времени (arrival - departure) ->
+            //переводим в миллисекунды
+            ticket.setDuration((arrival - departure + (departureTimeShift - arrivalTimeShift) * 3_600L) * 1_000);
         }
     }
 }
