@@ -6,7 +6,7 @@ import java.util.OptionalDouble;
 
 public class TicketsPercentileApplication {
 
-    private static String sourcePath = "src/main/resources/ticketswin.json";
+    private static String sourcePath = "src/main/resources/tickets.json";
     private static String departureName = "Владивосток";
     private static String arrivalName = "Тель-Авив";
     private static int departureTimeShift = 10;

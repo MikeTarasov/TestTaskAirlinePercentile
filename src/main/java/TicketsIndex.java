@@ -37,11 +37,9 @@ public class TicketsIndex {
             parseTickets(ticketsArray, departureName, arrivalName);
 
             calculateDuration(departureTimeShift, arrivalTimeShift);
-        } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+        } catch (Exception e) {
+            System.err.println(e.getMessage() != null ? e.getMessage() : "Wrong encoding! Use -Dfile.encoding=UTF-8");
             System.exit(1);
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
